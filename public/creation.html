@@ -1,0 +1,50 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>场景图生成</title>
+    <link rel="icon" href="data:," />
+    <link rel="stylesheet" href="/styles.css" />
+  </head>
+  <body class="creation-page-body">
+    <main class="creation-shell">
+      <header class="topbar creation-topbar">
+        <div><h1>场景图生成</h1><p class="meta">gpt-image-2</p></div>
+        <div class="top-actions">
+          <a class="button ghost" href="/">白底图生成</a>
+          <a class="button ghost" href="/#history">生成历史</a>
+        </div>
+      </header>
+      <section class="creation-workbench">
+        <section class="task-launch-panel"><button id="openCreationTaskDialog" class="button primary" type="button">添加任务</button><button id="openCreationPromptEditor" class="button" type="button">修改提示词</button><button id="resetCreationPrompt" class="button ghost" type="button">恢复默认提示词</button></section>
+        <dialog id="creationTaskDialog" class="task-composer-dialog">
+          <div class="dialog-head"><strong>添加任务</strong><button id="closeCreationTaskDialog" class="icon-button" type="button" aria-label="关闭">×</button></div>
+          <form id="creationForm" class="creation-controls">
+          <div class="field creation-template-field"><span>场景图</span><div id="creationTemplateList" class="creation-template-list" role="radiogroup"></div></div>
+          <div class="creation-upload-grid">
+            <div class="field"><span>成品窗帘参考图</span><label class="converter-file-picker"><input id="creationFabricInput" class="converter-file-input" type="file" accept="image/png,image/jpeg,image/webp,image/heic,image/heif,.heic,.heif" multiple /><span class="converter-picker-button">选择文件</span><span id="creationFabricSummary" class="converter-selection-summary">未选择文件</span></label></div>
+            <div class="field"><span>成品窗帘参考图文件夹</span><label class="converter-file-picker"><input id="creationFolderInput" class="converter-file-input" type="file" accept="image/png,image/jpeg,image/webp,image/heic,image/heif,.heic,.heif" webkitdirectory directory multiple /><span class="converter-picker-button">选择文件夹</span><span id="creationFolderSummary" class="converter-selection-summary">未选择文件夹</span></label></div>
+          </div>
+          <label class="field creation-prompt"><span>补充提示词</span><textarea id="creationPrompt" rows="2" placeholder="可留空"></textarea></label>
+          <output id="creationOutputPreview" class="output-name-preview" aria-live="polite"></output>
+          <div class="creation-option-grid four">
+            <label class="field"><span>画质</span><select id="creationQuality"><option value="high">高</option><option value="medium">中</option><option value="low">低</option><option value="auto">自动</option></select></label>
+            <label class="field"><span>分辨率</span><select id="creationSize"><option value="2048x2048">2K · 2048 × 2048 · 1:1</option><option value="2880x2880">最大方图 · 2880 × 2880 · 1:1</option><option value="3840x2160">4K 横图 · 3840 × 2160 · 16:9</option><option value="2160x3840">4K 竖图 · 2160 × 3840 · 9:16</option><option value="1536x1024">1536 × 1024 · 3:2</option><option value="1024x1536">1024 × 1536 · 2:3</option><option value="2048x1152">1672 × 941 · 16:9</option><option value="1152x2048">941 × 1672 · 9:16</option></select></label>
+          </div>
+          <div class="actions creation-actions"><button id="creationGenerate" class="button primary" type="submit">添加任务</button></div>
+          </form>
+        </dialog>
+        <section class="result-panel creation-results">
+          <div class="progress-wrap"><div class="progress-meta"><span id="creationProgress">0 / 0</span><span id="creationStatus">待选择</span></div><div class="progress-track"><div id="creationProgressBar" class="progress-bar"></div></div></div>
+          <div class="actions native-queue-export"><button id="creationDownload" class="button" type="button" disabled>下载选中</button><button id="creationWebp" class="button" type="button" disabled>导出WebP</button></div>
+          <div id="creationListViewport" class="result-list-viewport"><div id="creationList" class="queue-list"></div></div>
+          <nav class="result-pagination"><button id="creationPrevious" class="icon-button" type="button" aria-label="上一页">‹</button><span id="creationPage">1 / 1</span><button id="creationNext" class="icon-button" type="button" aria-label="下一页">›</button></nav>
+        </section>
+      </section>
+    </main>
+    <dialog id="creationPromptEditorDialog" class="prompt-editor-dialog"><div class="dialog-head"><strong>修改内置提示词</strong><button id="closeCreationPromptEditor" class="icon-button" type="button" aria-label="关闭">×</button></div><div class="prompt-editor-body"><label class="field"><span>内置规则</span><textarea id="creationPromptEditorInput" rows="10" maxlength="20000"></textarea></label><div class="prompt-editor-locked"><strong>系统参数</strong><p>输出比例会在提交时自动带入。</p></div><div class="actions"><button id="saveCreationPromptEditor" class="button primary" type="button">保存</button></div></div></dialog>
+    <dialog id="creationPreviewDialog" class="preview-dialog"><div class="dialog-head"><strong id="creationDialogTitle">预览</strong><button id="creationDialogClose" class="icon-button" type="button" aria-label="关闭">×</button></div><div id="creationDialogWrap" class="dialog-image-wrap"><img id="creationDialogImage" alt="" /></div></dialog>
+    <script type="module" src="/creation.js"></script>
+  </body>
+</html>

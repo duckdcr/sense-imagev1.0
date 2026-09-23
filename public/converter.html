@@ -1,0 +1,90 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>批量格式转换</title>
+    <link rel="icon" href="data:," />
+    <link rel="stylesheet" href="/styles.css" />
+  </head>
+  <body class="converter-page-body">
+    <main class="app-shell converter-page converter-shell">
+      <header class="topbar converter-header">
+        <div>
+          <h1>批量格式转换</h1>
+          <p class="meta">JPG → WebP · 质量 90 · 最长边 4000px</p>
+        </div>
+        <nav class="top-actions" aria-label="页面操作">
+          <a class="button ghost" href="/">返回生图</a>
+        </nav>
+      </header>
+
+      <section class="converter-workbench">
+        <aside class="control-panel converter-controls">
+          <div class="field">
+            <span>选择 JPG</span>
+            <label class="converter-file-picker">
+              <input id="jpgInput" class="converter-file-input" type="file" accept=".jpg,.jpeg,image/jpeg" multiple />
+              <span class="converter-picker-button">选择文件</span>
+              <span id="jpgInputSummary" class="converter-selection-summary">未选择文件</span>
+            </label>
+          </div>
+
+          <div class="field">
+            <span>选择 JPG 文件夹</span>
+            <label class="converter-file-picker">
+              <input id="jpgFolderInput" class="converter-file-input" type="file" accept=".jpg,.jpeg,image/jpeg" webkitdirectory directory multiple />
+              <span class="converter-picker-button">选择文件夹</span>
+              <span id="jpgFolderInputSummary" class="converter-selection-summary">未选择文件夹</span>
+            </label>
+          </div>
+
+          <div class="converter-output-field">
+            <span>输出文件夹</span>
+            <div class="database-load-row">
+              <button id="selectConverterOutputButton" class="button" type="button">选择文件夹</button>
+              <span id="converterOutputSummary" class="database-summary">未选择</span>
+            </div>
+          </div>
+
+          <output id="converterOutputPreview" class="output-name-preview" aria-live="polite"></output>
+
+          <div class="actions converter-actions">
+            <button id="startConversionButton" class="button primary" type="button" disabled>开始转换</button>
+            <button id="clearConverterButton" class="button ghost" type="button" disabled>清空列表</button>
+          </div>
+        </aside>
+
+        <section class="result-panel converter-results">
+          <div class="progress-wrap">
+            <div class="progress-meta">
+              <span id="converterProgressText">0 / 0</span>
+              <span id="converterStatusText">待选择</span>
+            </div>
+            <div class="progress-track" aria-hidden="true">
+              <div id="converterProgressBar" class="progress-bar"></div>
+            </div>
+          </div>
+
+          <div class="converter-list-head">
+            <strong>转换任务</strong>
+            <span id="converterSizeSummary">0 个文件</span>
+          </div>
+          <div id="converterListViewport" class="converter-list-viewport">
+            <div id="converterList" class="converter-list">
+              <div class="empty-state">未选择 JPG 文件</div>
+            </div>
+          </div>
+
+          <nav id="converterPagination" class="converter-pagination" aria-label="转换任务分页">
+            <button id="converterPreviousPageButton" class="icon-button" type="button" aria-label="上一页" title="上一页">‹</button>
+            <span id="converterPageIndicator">1 / 1</span>
+            <button id="converterNextPageButton" class="icon-button" type="button" aria-label="下一页" title="下一页">›</button>
+          </nav>
+        </section>
+      </section>
+    </main>
+
+    <script type="module" src="/converter.js"></script>
+  </body>
+</html>

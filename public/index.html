@@ -1,0 +1,337 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>批量场景生图</title>
+    <link rel="icon" href="data:," />
+    <link rel="stylesheet" href="/styles.css" />
+  </head>
+  <body class="generation-page">
+    <aside id="workspaceNav" class="workspace-nav" aria-label="功能导航">
+      <div class="workspace-brand">Image 2</div>
+      <nav>
+        <button type="button" data-workspace-target="main" aria-current="page">白底图生成</button>
+        <button type="button" data-workspace-target="creation" aria-current="false">场景图生成</button>
+        <button type="button" data-workspace-target="custom" aria-current="false">多提示词生图</button>
+        <button type="button" data-workspace-target="converter" aria-current="false">格式转换</button>
+        <button type="button" data-workspace-target="history" aria-current="false">生成历史</button>
+      </nav>
+    </aside>
+
+    <main id="workspaceMainFeature" class="app-shell generation-shell workspace-main-feature">
+      <header class="topbar">
+        <div>
+          <h1>批量场景生图</h1>
+          <p class="meta">gpt-image-2 · 最高画质</p>
+        </div>
+        <form id="apiForm" class="top-actions" autocomplete="off">
+          <button id="checkModelButton" class="button ghost" type="button">检查模型</button>
+          <a class="button ghost workspace-top-link" href="#converter">格式转换</a>
+          <a class="button ghost workspace-top-link" href="#creation">场景图生成</a>
+          <a class="button ghost workspace-top-link" href="#custom">多提示词生图</a>
+          <button id="openHistoryButton" class="button ghost" type="button">生成历史</button>
+        </form>
+      </header>
+
+      <section class="workbench">
+        <section class="task-launch-panel">
+          <button id="openMainTaskDialog" class="button primary" type="button">添加任务</button>
+          <button id="openMainPromptEditor" class="button" type="button">修改提示词</button>
+          <button id="resetMainPrompt" class="button ghost" type="button">恢复默认提示词</button>
+        </section>
+        <dialog id="mainTaskDialog" class="task-composer-dialog">
+          <div class="dialog-head"><strong>添加任务</strong><button id="closeMainTaskDialog" class="icon-button" type="button" aria-label="关闭">×</button></div>
+          <form class="control-panel" id="toolForm">
+          <div class="source-mode" role="group" aria-label="素材来源">
+            <button id="manualModeButton" type="button" aria-pressed="true">手动上传</button>
+            <button id="databaseModeButton" type="button" aria-pressed="false">数据库批量</button>
+          </div>
+
+          <div id="databaseControls" class="database-controls" hidden>
+            <label class="database-mode-field database-task-field">
+              <span>任务类型</span>
+              <select id="databaseTaskType">
+                <option value="scene_replacement">场景替换</option>
+                <option value="curtain_product">白底成品</option>
+              </select>
+            </label>
+            <label class="database-mode-field">
+              <span>任务方式</span>
+              <select id="databaseRunMode">
+                <option value="continue">继续未完成</option>
+                <option value="regenerate">重新生成全部</option>
+              </select>
+            </label>
+            <label id="databaseSaveFormatField" class="database-mode-field">
+              <span>自动保存格式</span>
+              <select id="databaseSaveFormat">
+                <option value="jpg">JPG</option>
+                <option value="webp" selected>WebP</option>
+                <option value="both">JPG + WebP</option>
+              </select>
+            </label>
+            <div id="databaseSceneOutputControls" class="database-load-row">
+              <button id="selectDatabaseOutputButton" class="button" type="button">选择保存目录</button>
+              <span id="databaseOutputSummary" class="database-summary">未选择</span>
+            </div>
+            <div id="curtainProductDirectoryControls" class="curtain-product-directories" hidden>
+              <label class="database-mode-field">
+                <span>帘头样式</span>
+                <select id="curtainProductHeading">
+                  <option value="grommet">圆孔帘</option>
+                  <option value="doublePinch">韩式双捏褶帘</option>
+                </select>
+              </label>
+              <div class="curtain-product-directory">
+                <span>保存目录</span>
+                <div class="database-load-row">
+                  <button id="selectCurtainProductDirectoryButton" class="button" type="button">选择目录</button>
+                  <span id="curtainProductDirectorySummary" class="database-summary">未选择</span>
+                </div>
+              </div>
+            </div>
+            <div class="database-load-row">
+              <button id="loadDatabaseButton" class="button" type="button">读取数据库</button>
+              <span id="databaseSummary" class="database-summary">尚未读取</span>
+            </div>
+            <label class="database-mode-field prompt-field">
+              <span>补充提示词</span>
+              <textarea id="promptInput" rows="4" maxlength="20000" placeholder="可留空"></textarea>
+            </label>
+          </div>
+
+          <div id="manualControls">
+            <fieldset class="field compact-field manual-heading-field">
+              <legend>帘头样式</legend>
+              <div class="manual-heading-options">
+                <label><input name="manualCurtainProductHeading" type="checkbox" value="grommet" />圆孔帘</label>
+                <label><input name="manualCurtainProductHeading" type="checkbox" value="doublePinch" checked />韩式双捏褶帘</label>
+              </div>
+            </fieldset>
+
+            <label class="field compact-field manual-sample-size-field">
+              <span>面料图片实际尺寸</span>
+              <select id="manualFabricSampleSize">
+                <option value="10">10 cm × 10 cm</option>
+                <option value="15">15 cm × 15 cm</option>
+              </select>
+            </label>
+
+            <label class="field compact-field manual-catalog-root-field">
+              <span>面料系列资料目录</span>
+              <input id="manualFabricCatalogRoot" type="text" value="/Users/wangyuanzi/Documents/code/work2/test/32" autocomplete="off" spellcheck="false" />
+              <small>目录内需有一个 CSV；完整花位图放在「居莱/花位图」。</small>
+            </label>
+
+            <div class="field manual-fabric-picker">
+              <span>面料图</span>
+              <label class="converter-file-picker manual-file-picker">
+                <input id="fabricInput" class="converter-file-input" type="file" accept="image/png,image/jpeg,image/webp,image/heic,image/heif,.heic,.heif" multiple />
+                <span class="converter-picker-button">选择文件</span>
+                <span id="fabricInputSummary" class="converter-selection-summary">未选择文件</span>
+              </label>
+            </div>
+
+            <div class="field manual-folder-picker">
+              <span>面料文件夹</span>
+              <label class="converter-file-picker manual-file-picker">
+                <input id="fabricFolderInput" class="converter-file-input" type="file" accept="image/png,image/jpeg,image/webp,image/heic,image/heif,.heic,.heif" webkitdirectory directory multiple />
+                <span class="converter-picker-button">选择文件夹</span>
+                <span id="fabricFolderInputSummary" class="converter-selection-summary">未选择文件夹</span>
+              </label>
+            </div>
+          </div>
+
+          <output id="outputNamePreview" class="output-name-preview" aria-live="polite"></output>
+
+          <label class="field compact-field">
+            <span>画质</span>
+            <select id="qualityInput">
+              <option value="high">高</option>
+              <option value="medium">中</option>
+              <option value="low">低</option>
+              <option value="auto">自动</option>
+            </select>
+          </label>
+
+          <label class="field compact-field">
+            <span>分辨率</span>
+            <select id="sizeInput">
+              <option value="2048x2048">2K · 2048 × 2048 · 1:1</option>
+              <option value="2880x2880">最大方图 · 2880 × 2880 · 1:1</option>
+              <option value="3840x2160">4K 横图 · 3840 × 2160 · 16:9</option>
+              <option value="2160x3840">4K 竖图 · 2160 × 3840 · 9:16</option>
+              <option value="1536x1024">1536 × 1024 · 3:2</option>
+              <option value="1024x1536">1024 × 1536 · 2:3</option>
+              <option value="2048x1152">1672 × 941 · 16:9</option>
+              <option value="1152x2048">941 × 1672 · 9:16</option>
+            </select>
+          </label>
+
+          <div class="actions">
+            <button id="generateButton" class="button primary" type="submit" aria-label="添加任务" data-run-state="idle">添加任务</button>
+          </div>
+          </form>
+        </dialog>
+
+        <section class="result-panel">
+          <div class="progress-wrap">
+            <div class="progress-meta">
+              <span id="progressText">0 / 0</span>
+              <span id="statusText">待开始</span>
+            </div>
+            <div class="progress-track" aria-hidden="true">
+              <div id="progressBar" class="progress-bar"></div>
+            </div>
+          </div>
+
+          <div class="result-tabs" role="tablist" aria-label="结果列表">
+            <button id="queueViewButton" class="result-tab" type="button" role="tab" aria-selected="true">
+              任务列表 <span id="queueCount">0</span>
+            </button>
+            <button id="completedViewButton" class="result-tab" type="button" role="tab" aria-selected="false">
+              已完成 <span id="completedCount">0</span>
+            </button>
+          </div>
+
+          <div class="actions native-queue-export">
+            <button id="downloadButton" class="button" type="button" disabled>下载选中</button>
+            <button id="webpDownloadButton" class="button" type="button" disabled>导出WebP</button>
+          </div>
+
+          <div id="resultListViewport" class="result-list-viewport">
+            <div id="queueList" class="queue-list"></div>
+            <div id="completedList" class="queue-list" hidden></div>
+          </div>
+
+          <nav id="resultPagination" class="result-pagination" aria-label="列表分页">
+            <button id="previousPageButton" class="icon-button" type="button" aria-label="上一页" title="上一页">‹</button>
+            <span id="pageIndicator">1 / 1</span>
+            <button id="nextPageButton" class="icon-button" type="button" aria-label="下一页" title="下一页">›</button>
+          </nav>
+        </section>
+      </section>
+    </main>
+
+    <section class="workspace-feature-frames" aria-label="功能工作区">
+      <iframe id="workspaceCreationFrame" data-workspace-frame="creation" src="/creation.html?embedded=1" title="场景图生成" hidden></iframe>
+      <iframe id="workspaceCustomFrame" data-workspace-frame="custom" src="/custom.html?embedded=1" title="多提示词生图" hidden></iframe>
+      <iframe id="workspaceConverterFrame" data-workspace-frame="converter" src="/converter.html?embedded=1" title="格式转换" hidden></iframe>
+      <iframe id="workspaceHistoryFrame" data-workspace-frame="history" src="/history.html?embedded=1" title="生成历史" hidden></iframe>
+    </section>
+
+    <aside id="workspaceQueue" class="workspace-queue" aria-label="全功能任务队列">
+      <header class="workspace-queue-head">
+        <div>
+          <strong>任务队列</strong>
+          <span id="workspaceQueueCount">0</span>
+        </div>
+        <span id="workspaceQueueSummary">0 已完成 · 0 已选</span>
+      </header>
+      <div class="workspace-queue-tabs" role="tablist" aria-label="共享任务结果">
+        <button id="workspaceSharedQueueView" class="workspace-queue-tab" type="button" role="tab" aria-selected="true">任务列表 <span id="workspaceSharedQueueCount">0</span></button>
+        <button id="workspaceSharedCompletedView" class="workspace-queue-tab" type="button" role="tab" aria-selected="false">已完成 <span id="workspaceSharedCompletedCount">0</span></button>
+      </div>
+      <label class="workspace-api-key">
+        <span>API Key</span>
+        <input id="workspaceApiKeyInput" class="api-key-input" type="text" autocomplete="off" spellcheck="false" placeholder="API Key" />
+      </label>
+      <label class="workspace-concurrency">
+        <span>最大并发数</span>
+        <input id="workspaceConcurrencyInput" type="number" min="1" max="100" step="1" value="97" inputmode="numeric" />
+        <button id="workspaceConcurrencyApply" class="button ghost" type="button">确定</button>
+      </label>
+      <button id="workspaceStartQueue" class="button primary workspace-start-button" type="button" disabled>开始生成</button>
+      <button id="workspacePauseQueue" class="button workspace-pause-button" type="button" disabled>暂停队列</button>
+      <div class="workspace-queue-actions">
+        <button id="workspaceDownloadPng" class="button" type="button" disabled>按批次下载 PNG</button>
+        <button id="workspaceExportWebp" class="button" type="button" disabled>按批次导出 WebP</button>
+      </div>
+      <p id="workspaceQueueStatus" class="workspace-queue-message" aria-live="polite"></p>
+      <div id="workspaceQueueList" class="workspace-queue-list">
+        <div class="workspace-queue-empty">暂无任务</div>
+      </div>
+      <nav class="workspace-queue-pagination" aria-label="共享任务分页">
+        <button id="workspaceQueuePrevious" class="icon-button" type="button" aria-label="上一页">‹</button>
+        <span id="workspaceQueuePage">1 / 1</span>
+        <button id="workspaceQueueNext" class="icon-button" type="button" aria-label="下一页">›</button>
+      </nav>
+    </aside>
+
+    <dialog id="workspaceBatchDownloadDialog" class="batch-download-dialog">
+      <div class="dialog-head"><strong id="workspaceBatchDownloadTitle">选择下载批次</strong><button id="workspaceBatchDownloadClose" class="icon-button" type="button" aria-label="关闭">×</button></div>
+      <div id="workspaceBatchDownloadList" class="batch-download-list"></div>
+      <p id="workspaceBatchDownloadStatus" class="workspace-queue-message" aria-live="polite"></p>
+      <div class="actions"><button id="workspaceBatchDownloadCancel" class="button ghost" type="button">取消</button><button id="workspaceBatchDownloadConfirm" class="button primary" type="button">选择文件夹并保存</button></div>
+    </dialog>
+
+    <dialog id="mainPromptEditorDialog" class="prompt-editor-dialog">
+      <div class="dialog-head"><strong>修改内置提示词</strong><button id="closeMainPromptEditor" class="icon-button" type="button" aria-label="关闭">×</button></div>
+      <div class="prompt-editor-body">
+        <label class="field"><span>面料类型</span><select id="mainPromptEditorKind"><option value="manual_product_plain">无花位／素色与微纹理面料</option><option value="manual_product_repeat">有完整花位循环的面料</option></select></label>
+        <label class="field"><span>内置规则</span><textarea id="mainPromptEditorInput" rows="10" maxlength="20000"></textarea></label>
+        <div class="prompt-editor-locked"><strong>系统参数</strong><p>服务器会按 SKU 从 CSV 读取面料类型、成分和花位尺寸；有花位时自动加入完整花位图（Image 3）。帘头、实拍尺寸、成品尺度和循环数量会在提交时自动带入。</p></div>
+        <div class="actions"><button id="saveMainPromptEditor" class="button primary" type="button">保存</button></div>
+      </div>
+    </dialog>
+
+    <dialog id="skuSelectionDialog" class="sku-selection-dialog">
+      <div class="dialog-head">
+        <div>
+          <strong id="skuSelectionTitle">选择 SKU</strong>
+          <span id="skuSelectionCounts" class="sku-selection-counts">已选 0 / 候选 0</span>
+        </div>
+        <button id="closeSkuSelectionButton" class="icon-button" type="button" aria-label="关闭" title="关闭">×</button>
+      </div>
+      <div class="sku-selection-tools">
+        <input id="skuSearchInput" type="search" placeholder="搜索 SKU" autocomplete="off" />
+        <button id="toggleAllFilteredSkuButton" class="button" type="button">取消全部搜索结果</button>
+        <button id="toggleCurrentSkuPageButton" class="button" type="button">取消当前页</button>
+      </div>
+      <div id="skuSelectionList" class="sku-selection-list" aria-label="SKU 列表"></div>
+      <div class="sku-selection-footer">
+        <nav class="result-pagination" aria-label="SKU 分页">
+          <button id="previousSkuPageButton" class="icon-button" type="button" aria-label="上一页" title="上一页">‹</button>
+          <span id="skuPageIndicator">1 / 1</span>
+          <button id="nextSkuPageButton" class="icon-button" type="button" aria-label="下一页" title="下一页">›</button>
+        </nav>
+        <div class="sku-selection-actions">
+          <button id="cancelSkuSelectionButton" class="button" type="button">取消</button>
+          <button id="confirmSkuSelectionButton" class="button primary" type="button" disabled>确认入队</button>
+        </div>
+      </div>
+    </dialog>
+
+    <dialog id="previewDialog" class="preview-dialog">
+      <div class="dialog-head">
+        <strong id="dialogTitle">预览</strong>
+        <button id="closeDialogButton" class="icon-button" type="button" aria-label="关闭">×</button>
+      </div>
+      <div id="dialogImageWrap" class="dialog-image-wrap">
+        <img id="dialogImage" alt="" />
+      </div>
+    </dialog>
+
+    <dialog id="historyBrowserDialog" class="history-browser-dialog">
+      <div class="dialog-head">
+        <strong>生成历史</strong>
+        <button id="closeHistoryBrowserButton" class="icon-button" type="button" aria-label="关闭">×</button>
+      </div>
+      <iframe id="historyFrame" class="history-browser-frame" src="about:blank" title="生成历史"></iframe>
+    </dialog>
+
+    <dialog id="workspacePreviewDialog" class="preview-dialog">
+      <div class="dialog-head">
+        <strong id="workspacePreviewTitle">预览</strong>
+        <button id="workspacePreviewClose" class="icon-button" type="button" aria-label="关闭">×</button>
+      </div>
+      <div class="dialog-image-wrap">
+        <img id="workspacePreviewImage" alt="" />
+      </div>
+    </dialog>
+
+    <script type="module" src="/app.js"></script>
+    <script type="module" src="/workspace.js"></script>
+  </body>
+</html>

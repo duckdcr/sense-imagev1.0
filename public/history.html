@@ -1,0 +1,131 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>生成历史</title>
+    <link rel="icon" href="data:," />
+    <link rel="stylesheet" href="/styles.css" />
+  </head>
+  <body class="history-page-body">
+    <main class="app-shell">
+      <header class="topbar history-page-header">
+        <div>
+          <h1>生成历史</h1>
+          <p class="meta">按生成日期查看已生成的场景图</p>
+        </div>
+        <nav class="top-actions" aria-label="页面操作">
+          <a class="button ghost" href="/#main">返回生成</a>
+          <button id="refreshHistoryButton" class="button ghost" type="button">刷新</button>
+        </nav>
+      </header>
+
+      <section class="history-shell">
+        <div id="historyList" class="history-list"></div>
+        <div id="historyPagination" class="history-pagination" aria-label="历史分页">
+          <p id="historyStatus" class="history-pagination-status" aria-live="polite"></p>
+          <div class="history-batch-actions">
+            <button id="downloadSelectedHistoryButton" class="button ghost" type="button" disabled>下载选中</button>
+            <button id="exportSelectedHistoryWebpButton" class="button ghost" type="button" disabled>导出 WebP</button>
+            <button id="downloadHistoryBatchesButton" class="button ghost" type="button">选择批次下载</button>
+            <button id="exportHistoryBatchesWebpButton" class="button ghost" type="button">选择批次导出 WebP</button>
+          </div>
+          <div class="history-pagination-summary">
+            <span id="historyTotal">共 0 张</span>
+            <span id="historyPageIndicator">第 1 / 1 页</span>
+          </div>
+          <div class="history-pagination-actions">
+            <button id="retryHistoryButton" class="button ghost" type="button" hidden>重试</button>
+            <button id="prevHistoryPageButton" class="button ghost" type="button" disabled>上一页</button>
+            <button id="nextHistoryPageButton" class="button ghost" type="button" disabled>下一页</button>
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <dialog id="historyDialog" class="history-dialog">
+      <div class="dialog-head">
+        <strong id="detailTitle">历史详情</strong>
+        <button id="closeHistoryDialogButton" class="icon-button" type="button" aria-label="关闭">×</button>
+      </div>
+      <div class="history-detail">
+        <div class="history-product-results">
+          <div id="detailResultsUnavailable" class="history-image-unavailable history-results-unavailable" hidden>成品图不可用</div>
+          <figure id="detailResultFigure" class="history-result">
+            <img id="detailResultImage" alt="" hidden />
+            <div id="detailResultUnavailable" class="history-image-unavailable history-result-unavailable" hidden>成品图不可用</div>
+            <figcaption id="detailResultName"></figcaption>
+            <div class="history-actions">
+              <button id="downloadHistoryButton" class="button" type="button">下载 JPG</button>
+              <button id="webpHistoryButton" class="button ghost" type="button">导出 WebP</button>
+            </div>
+          </figure>
+          <figure id="detailSecondResultFigure" class="history-result" hidden>
+            <img id="detailSecondResultImage" alt="" hidden />
+            <div id="detailSecondResultUnavailable" class="history-image-unavailable history-result-unavailable" hidden>成品图不可用</div>
+            <figcaption id="detailSecondResultName"></figcaption>
+            <div class="history-actions">
+              <button id="downloadSecondHistoryButton" class="button" type="button">下载原图</button>
+              <button id="webpSecondHistoryButton" class="button ghost" type="button">导出 WebP</button>
+            </div>
+          </figure>
+        </div>
+        <div class="history-detail-side">
+          <div class="history-source-grid">
+            <figure id="detailSceneFigure" class="detail-figure" hidden>
+              <img id="detailSceneImage" alt="" hidden />
+              <figcaption>
+                <span id="detailSceneLabel">场景图</span>
+                <strong id="detailSceneName"></strong>
+              </figcaption>
+            </figure>
+            <figure id="detailFabricFigure" class="detail-figure">
+              <img id="detailFabricImage" alt="" hidden />
+              <div id="detailFabricUnavailable" class="history-image-unavailable detail-image-unavailable" hidden>面料图不可用</div>
+              <figcaption>
+                <span>面料图</span>
+                <strong id="detailFabricName"></strong>
+              </figcaption>
+            </figure>
+          </div>
+          <section id="detailPromptSection" class="prompt-box" aria-label="完整生成提示词">
+            <span id="detailPromptLabel">完整提示词</span>
+            <p id="detailPrompt"></p>
+          </section>
+          <section id="detailUserPromptSection" class="prompt-box" aria-label="补充提示词" hidden>
+            <span>补充提示词</span>
+            <p id="detailUserPrompt"></p>
+          </section>
+          <section id="detailCreationOptions" class="prompt-box" aria-label="窗帘规格" hidden>
+            <span id="detailTaskType">新增窗帘</span>
+            <p id="detailOptionsText"></p>
+          </section>
+          <section id="detailProductParameters" class="prompt-box product-parameters" aria-label="成品窗帘规格" hidden>
+            <span id="detailParametersLabel">成品规格</span>
+            <p id="detailProductParametersText"></p>
+          </section>
+        </div>
+      </div>
+    </dialog>
+
+    <dialog id="historyBatchDownloadDialog" class="batch-download-dialog">
+      <div class="dialog-head"><strong id="historyBatchDownloadTitle">选择下载批次</strong><button id="closeHistoryBatchDownloadButton" class="icon-button" type="button" aria-label="关闭">×</button></div>
+      <div id="historyBatchDownloadList" class="batch-download-list"></div>
+      <p id="historyBatchDownloadStatus" class="workspace-queue-message" aria-live="polite"></p>
+      <div class="actions"><button id="cancelHistoryBatchDownloadButton" class="button ghost" type="button">取消</button><button id="confirmHistoryBatchDownloadButton" class="button primary" type="button">选择文件夹并保存</button></div>
+    </dialog>
+
+    <dialog id="historyPreviewDialog" class="preview-dialog">
+      <div class="dialog-head">
+        <strong id="historyPreviewTitle">大图查看</strong>
+        <button id="closeHistoryPreviewButton" class="icon-button" type="button" aria-label="关闭">×</button>
+      </div>
+      <div id="historyPreviewWrap" class="dialog-image-wrap">
+        <img id="historyPreviewImage" alt="" />
+      </div>
+    </dialog>
+
+    <script type="module" src="/embeddedPage.js"></script>
+    <script type="module" src="/history.js"></script>
+  </body>
+</html>

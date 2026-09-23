@@ -1,0 +1,89 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>多提示词生图</title>
+    <link rel="icon" href="data:," />
+    <link rel="stylesheet" href="/styles.css" />
+  </head>
+  <body class="custom-page-body">
+    <main class="custom-shell">
+      <header class="topbar custom-topbar">
+        <div><h1>多提示词生图</h1><p class="meta">gpt-image-2</p></div>
+        <div class="top-actions">
+          <a class="button ghost" href="/">批量场景生图</a>
+          <a class="button ghost" href="/#history">生成历史</a>
+        </div>
+      </header>
+
+      <section class="custom-workbench">
+        <section class="task-launch-panel"><button id="openCustomTaskDialog" class="button primary" type="button">添加任务</button></section>
+        <dialog id="customTaskDialog" class="task-composer-dialog">
+          <div class="dialog-head"><strong>添加任务</strong><button id="closeCustomTaskDialog" class="icon-button" type="button" aria-label="关闭">×</button></div>
+          <form id="customForm" class="custom-controls">
+          <div class="field">
+            <span>公共参考图</span>
+            <label class="converter-file-picker">
+              <input id="customReferenceInput" class="converter-file-input" type="file" accept="image/png,image/jpeg,image/webp,image/heic,image/heif,.heic,.heif" />
+              <span class="converter-picker-button">选择文件</span>
+              <span id="customReferenceSummary" class="converter-selection-summary">未选择参考图</span>
+            </label>
+          </div>
+          <div id="customReferencePreview" class="custom-reference-preview empty"><span>未选择</span></div>
+
+          <div class="custom-prompt-head">
+            <strong>提示词</strong>
+            <button id="customAddPrompt" class="icon-button" type="button" aria-label="添加提示词" title="添加提示词">＋</button>
+          </div>
+          <div id="customPromptList" class="custom-prompt-list"></div>
+
+          <output id="customOutputPreview" class="output-name-preview" aria-live="polite"></output>
+
+          <div class="custom-option-grid">
+            <label class="field"><span>画质</span><select id="customQuality"><option value="high">高</option><option value="medium">中</option><option value="low">低</option><option value="auto">自动</option></select></label>
+            <label class="field"><span>分辨率</span><select id="customSize"><option value="2048x2048">2K · 2048 × 2048</option><option value="2880x2880">最大方图 · 2880 × 2880</option><option value="3840x2160">4K 横图 · 3840 × 2160</option><option value="2160x3840">4K 竖图 · 2160 × 3840</option><option value="1536x1024">1536 × 1024</option><option value="1024x1536">1024 × 1536</option><option value="2048x1152">1672 × 941</option><option value="1152x2048">941 × 1672</option></select></label>
+          </div>
+
+          <div class="actions custom-actions">
+            <button id="customGenerate" class="button primary" type="submit">添加任务</button>
+          </div>
+          </form>
+        </dialog>
+
+        <section class="result-panel custom-results">
+          <div class="progress-wrap">
+            <div class="progress-meta"><span id="customProgress">0 / 0</span><span id="customStatus">待开始</span></div>
+            <div class="progress-track"><div id="customProgressBar" class="progress-bar"></div></div>
+          </div>
+          <div class="result-tabs" role="tablist" aria-label="结果列表">
+            <button id="customQueueView" class="result-tab" type="button" role="tab" aria-selected="true">
+              任务列表 <span id="customQueueCount">0</span>
+            </button>
+            <button id="customCompletedView" class="result-tab" type="button" role="tab" aria-selected="false">
+              已完成 <span id="customCompletedCount">0</span>
+            </button>
+          </div>
+          <div class="actions native-queue-export">
+            <button id="customDownload" class="button" type="button" disabled>下载选中</button>
+          </div>
+          <div id="customListViewport" class="result-list-viewport">
+            <div id="customList" class="queue-list"></div>
+            <div id="customCompletedList" class="queue-list" hidden></div>
+          </div>
+          <nav class="result-pagination">
+            <button id="customPrevious" class="icon-button" type="button" aria-label="上一页">‹</button>
+            <span id="customPage">1 / 1</span>
+            <button id="customNext" class="icon-button" type="button" aria-label="下一页">›</button>
+          </nav>
+        </section>
+      </section>
+    </main>
+
+    <dialog id="customPreviewDialog" class="preview-dialog">
+      <div class="dialog-head"><strong id="customDialogTitle">预览</strong><button id="customDialogClose" class="icon-button" type="button" aria-label="关闭">×</button></div>
+      <div id="customDialogWrap" class="dialog-image-wrap"><img id="customDialogImage" alt="" /></div>
+    </dialog>
+    <script type="module" src="/custom.js"></script>
+  </body>
+</html>
